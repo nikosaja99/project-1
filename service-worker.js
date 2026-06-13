@@ -1,4 +1,4 @@
-const CACHE_NAME = "time-skip-v2";
+const CACHE_NAME = "time-skip-v3";
 
 const FILES = [
   "/project-1/",
@@ -9,14 +9,22 @@ const FILES = [
   "/project-1/icons/icon-512.png"
 ];
 
+// INSTALL
 self.addEventListener("install", (event) => {
   self.skipWaiting();
 
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES))
+    caches.open(CACHE_NAME).then(async (cache) => {
+      try {
+        await cache.addAll(FILES);
+      } catch (e) {
+        console.log("Cache failed:", e);
+      }
+    })
   );
 });
 
+// ACTIVATE
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -27,11 +35,25 @@ self.addEventListener("activate", (event) => {
       )
     )
   );
+
   self.clients.claim();
 });
 
+// FETCH (lebih aman untuk mobile)
 self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
+
   event.respondWith(
-    caches.match(event.request).then((res) => res || fetch(event.request))
+    fetch(event.request)
+      .then((response) => {
+        const copy = response.clone();
+
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, copy).catch(() => {});
+        });
+
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
