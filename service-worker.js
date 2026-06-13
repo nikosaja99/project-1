@@ -1,12 +1,12 @@
 const CACHE_NAME = "time-skip-v3";
 
 const FILES = [
-  "/project-1/",
-  "/project-1/index.html",
-  "/project-1/script.js",
-  "/project-1/manifest.json",
-  "/project-1/icons/icon-192.png",
-  "/project-1/icons/icon-512.png"
+  "./",
+  "./index.html",
+  "./script.js",
+  "./manifest.json",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png"
 ];
 
 // INSTALL
