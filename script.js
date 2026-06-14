@@ -206,16 +206,27 @@ function updateDayStatus(total, completed) {
 
     const isComplete = total > 0 && completed === total;
 
+    const alreadyDone =
+        localStorage.getItem(key) === "done";
+
     if (isComplete) {
+
+        if (!alreadyDone) {
+            showSuccessNotification();
+        }
+
         localStorage.setItem(key, "done");
+
     } else {
+
         localStorage.removeItem(key);
     }
 
     document.body.style.border =
-        isComplete ? "5px solid limegreen" : "5px solid red";
+        isComplete
+            ? "5px solid limegreen"
+            : "5px solid red";
 }
-
 // =====================
 // RENDER SCHEDULE
 // =====================
@@ -272,6 +283,16 @@ function initDays() {
     if (days.length === 0) {
         generateDays(730);
     }
+}
+
+function showSuccessNotification() {
+    const notif = document.getElementById("successNotification");
+
+    notif.classList.remove("hidden");
+
+    setTimeout(() => {
+        notif.classList.add("hidden");
+    }, 5000);
 }
 
 initDays();
